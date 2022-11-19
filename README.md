@@ -1,6 +1,11 @@
 # Myitian.LibNCM
 A library to read and write Netease Cloud Music file.
 
+## Supported Runtimes
+.NET Framework 4 or above
+
+.NET Standard 2.0 or above
+
 ## Example
 ```csharp
 using Myitian.LibNCM;
