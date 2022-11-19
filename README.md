@@ -40,3 +40,7 @@ NCM ncm3 = new NCM() // Create a NCM file
 };
 Console.WriteLine(ncm3.ToString()); // Prints the information of the NCM file
 ```
+
+## References
+[网易云音乐ncm格式分析以及ncm与mp3格式转换](https://www.cnblogs.com/cyx-b/p/13443003.html)
+[ncmdumpGUI](https://github.com/kpali/ncmdumpGUI)
