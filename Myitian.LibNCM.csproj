@@ -5,6 +5,9 @@
     <Description>A library to read and write Netease Cloud Music file.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/Myitian/Myitian.LibNCM</PackageProjectUrl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <DebugType>portable</DebugType>
@@ -18,4 +21,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
     <DebugType>portable</DebugType>
   </PropertyGroup>
+  <ItemGroup>
+      <None Include="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 </Project>

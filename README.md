@@ -1,4 +1,6 @@
 # Myitian.LibNCM
+[![NuGet version (Myitian.LibNCM)](https://img.shields.io/badge/nuget-Myitian.LibNCM-6cf)](https://www.nuget.org/packages/Myitian.LibNCMr)
+
 A library to read and write Netease Cloud Music file.
 
 ## Supported Runtimes
