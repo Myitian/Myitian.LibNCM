@@ -17,6 +17,6 @@
     <RepositoryUrl>https://github.com/Myitian/Myitian.LibNCM</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
-      <None Include="README.md" Pack="true" PackagePath="" />
+      <None Include="../README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
