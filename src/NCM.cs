@@ -1,8 +1,6 @@
-﻿using System.Runtime.Serialization.Json;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Myitian.LibNCM;
 
@@ -56,13 +54,31 @@ public class NCM
     }
     private static byte[] AesDecrypt(ReadOnlySpan<byte> data, byte[] key)
     {
+        aes.Mode = CipherMode.ECB;
+        aes.Padding = PaddingMode.PKCS7;
         aes.Key = key;
+#if NET6_0_OR_GREATER
         return aes.DecryptEcb(data, PaddingMode.PKCS7);
+#else
+        using MemoryStream ms = new();
+        using CryptoStream cs = new(ms, aes.CreateDecryptor(key, null), CryptoStreamMode.Write);
+        cs.Write(data);
+        return ms.ToArray();
+#endif
     }
     private static byte[] AesEncrypt(ReadOnlySpan<byte> data, byte[] key)
     {
+        aes.Mode = CipherMode.ECB;
+        aes.Padding = PaddingMode.PKCS7;
         aes.Key = key;
+#if NET6_0_OR_GREATER
         return aes.EncryptEcb(data, PaddingMode.PKCS7);
+#else
+        using MemoryStream ms = new();
+        using CryptoStream cs = new(ms, aes.CreateEncryptor(key, null), CryptoStreamMode.Write);
+        cs.Write(data);
+        return ms.ToArray();
+#endif
     }
     private static int GenerateSBox(ReadOnlySpan<byte> key, Span<byte> result)
     {
@@ -150,8 +166,8 @@ public class NCM
             ReadOnlySpan<byte> base64Metadata = metadataChunk[Padding1.Length..];
             Span<char> base64Chars = stackalloc char[base64Metadata.Length];
             Encoding.ASCII.GetChars(base64Metadata, base64Chars);
-            Span<byte> encryptedMetadata = stackalloc byte[base64Chars.Length * 3 / 4 + 3];
-            Convert.TryFromBase64Chars(base64Chars, encryptedMetadata, out int len);
+            Span<byte> encryptedMetadata = stackalloc byte[base64Chars.Length * 3 / 4 + 1];
+            Util.TryFromBase64Chars(base64Chars, encryptedMetadata, out int len);
             ReadOnlySpan<byte> decryptedMetadata = AesDecrypt(encryptedMetadata[..len], MetadataKey.ToArray());
             // 跳过 "music:"
             if (!decryptedMetadata.StartsWith(Padding2.Span))
@@ -239,7 +255,7 @@ public class NCM
                 encryptedMetadata = AesEncrypt(ms.ToArray(), MetadataKey.ToArray());
             }
             Span<char> base64Chars = stackalloc char[encryptedMetadata.Length * 4 / 3 + 3];
-            Convert.TryToBase64Chars(encryptedMetadata, base64Chars, out int len);
+            Util.TryToBase64Chars(encryptedMetadata, base64Chars, out int len);
             Span<byte> metadataChunk = stackalloc byte[len + Padding1.Length];
             Padding1.Span.CopyTo(metadataChunk);
             Encoding.ASCII.GetBytes(base64Chars[..len], metadataChunk[Padding1.Length..]);
@@ -286,7 +302,7 @@ public class NCM
         sb.AppendLine(Metadata?.MusicName);
 
         sb.Append("Artists:".PadRight(18));
-        sb.AppendLine(string.Join("/", Metadata?.Artist?.Select(a => a[0]) ?? []));
+        sb.AppendLine(string.Join("/", Metadata?.Artist?.Select(a => a.Name) ?? []));
 
         sb.Append("Album:".PadRight(18));
         sb.AppendLine(Metadata?.Album);
@@ -310,7 +326,7 @@ public class NCM
         sb.AppendLine(Util.BytesToString(CoverImage.Span, 16));
 
         sb.Append("Music Data:".PadRight(18));
-        sb.AppendLine(Util.BytesToString(CoverImage.Span, 16));
+        sb.AppendLine(Util.BytesToString(MusicData.Span, 16));
 
         return sb.ToString();
     }

@@ -3,8 +3,7 @@
 namespace Myitian.LibNCM;
 [JsonSourceGenerationOptions(
     WriteIndented = false,
-    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    NumberHandling = JsonNumberHandling.AllowReadingFromString)]
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
 [JsonSerializable(typeof(NCMMetadata))]
 public partial class SourceGenerationContext : JsonSerializerContext
 {

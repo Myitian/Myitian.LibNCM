@@ -4,9 +4,6 @@ namespace Myitian.LibNCM;
 
 public class NCMMetadata
 {
-    [JsonPropertyName("format")]
-    public string? Format { get; set; }
-
     [JsonConverter(typeof(StringNumberJsonConverter))]
     [JsonPropertyName("musicId")]
     public long? MusicId { get; set; }
@@ -15,14 +12,14 @@ public class NCMMetadata
     public string? MusicName { get; set; }
 
     [JsonPropertyName("artist")]
-    public List<List<string>>? Artist { get; set; }
-
-    [JsonPropertyName("album")]
-    public string? Album { get; set; }
+    public List<Artist>? Artist { get; set; }
 
     [JsonConverter(typeof(StringNumberJsonConverter))]
     [JsonPropertyName("albumId")]
     public long? AlbumId { get; set; }
+
+    [JsonPropertyName("album")]
+    public string? Album { get; set; }
 
     [JsonConverter(typeof(StringNumberJsonConverter))]
     [JsonPropertyName("albumPicDocId")]
@@ -30,10 +27,6 @@ public class NCMMetadata
 
     [JsonPropertyName("albumPic")]
     public string? AlbumPic { get; set; }
-
-    [JsonConverter(typeof(StringNumberJsonConverter))]
-    [JsonPropertyName("mvId")]
-    public long? MvId { get; set; }
 
     [JsonConverter(typeof(StringNumberJsonConverter))]
     [JsonPropertyName("bitrate")]
@@ -49,8 +42,15 @@ public class NCMMetadata
     [JsonPropertyName("alias")]
     public List<string>? Alias { get; set; }
 
+    [JsonConverter(typeof(StringNumberJsonConverter))]
+    [JsonPropertyName("mvId")]
+    public long? MvId { get; set; }
+
     [JsonPropertyName("transNames")]
     public List<string>? TransNames { get; set; }
+
+    [JsonPropertyName("format")]
+    public string? Format { get; set; }
 
     [JsonConverter(typeof(StringNumberJsonConverter))]
     [JsonPropertyName("flag")]
@@ -72,4 +72,11 @@ public class Privilege
     [JsonConverter(typeof(StringNumberJsonConverter))]
     [JsonPropertyName("flag")]
     public long? Flag { get; set; }
+}
+
+[JsonConverter(typeof(ArtistJsonConverter))]
+public class Artist
+{
+    public string? Name { get; set; }
+    public long? ID { get; set; }
 }

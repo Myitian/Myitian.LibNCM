@@ -1,10 +1,16 @@
 # Myitian.LibNCM
-[![NuGet version (Myitian.LibNCM)](https://img.shields.io/badge/nuget-Myitian.LibNCM-6cf)](https://www.nuget.org/packages/Myitian.LibNCM)
+[![NuGet version (Myitian.LibNCM)](https://img.shields.io/nuget/v/Myitian.LibNCM?color=6cf&style=for-the-badge)](https://www.nuget.org/packages/Myitian.LibNCM)
 
 一个读写网易云音乐 NCM 文件的库。
 
-## 环境
-.NET 8
+## 依赖
+### .NET 6/7/8
+无额外依赖
+### .NET Standard 2.1
+[System.Text.Json](https://www.nuget.org/packages/System.Text.Json)
+### .NET Standard 2.0
+[System.Text.Json](https://www.nuget.org/packages/System.Text.Json)\
+[IndexRange](https://www.nuget.org/packages/IndexRange)
 
 ## 例子
 ```csharp
@@ -21,8 +27,7 @@ using (FileStream fs = new FileStream("example.ncm", FileMode.Open))
     ncm2.ImageCover = File.ReadAllBytes("cover.png");
     ncm2.Metadata = new NCMMetadata()
     {
-        MusicName = "Example Song",
-        Artist = new List<List<dynamic>> { new List<dynamic> { "Example Artist", 0 } },
+        MusicName = "Example Song 01",
         Album = "Example Album"
     };
     using (MemoryStream ms = new MemoryStream())
@@ -37,13 +42,12 @@ NCM ncm3 = new NCM() // 支持创建 NCM
     MusicData = File.ReadAllBytes("music.mp3"),
     Metadata = new NCMMetadata()
     {
-        MusicName = "Example Song",
-        Artist = new List<List<string>> { new List<string> { "Example Artist", "0" } },
+        MusicName = "Example Song 02",
         Album = "Example Album",
         Format = "mp3"
     }
 };
-Console.WriteLine(ncm3.ToString()); // Prints the information of the NCM file
+Console.WriteLine(ncm3.ToString()); // 打印 NCM 信息
 ```
 
 ## 参考资料

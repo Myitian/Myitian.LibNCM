@@ -5,7 +5,10 @@ namespace Myitian.LibNCM;
 
 public class StringNumberJsonConverter : JsonConverter<long?>
 {
-    public override long? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public const long MaxSafeInteger = 9007199254740991;
+    public const long MinSafeInteger = -9007199254740991;
+
+    public static long? Read(ref Utf8JsonReader reader)
     {
         switch (reader.TokenType)
         {
@@ -23,12 +26,15 @@ public class StringNumberJsonConverter : JsonConverter<long?>
                 throw new JsonException();
         }
     }
-
+    public override long? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        return Read(ref reader);
+    }
     public override void Write(Utf8JsonWriter writer, long? value, JsonSerializerOptions options)
     {
-        if (value is null)
-            writer.WriteNullValue();
-        else
+        if (value is >= MinSafeInteger and <= MaxSafeInteger)
             writer.WriteNumberValue(value.Value);
+        else
+            writer.WriteStringValue(value.ToString());
     }
 }
