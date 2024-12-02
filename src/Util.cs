@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Text;
 
@@ -144,22 +145,53 @@ public static class Util
 #endif
     public static void Write(Stream stream, int value)
     {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        Span<byte> buffer = stackalloc byte[4];
+        BinaryPrimitives.WriteInt32LittleEndian(buffer, value);
+#else
         ReadOnlySpan<byte> buffer = [
             (byte)value,
             (byte)(value >> 8),
             (byte)(value >> 16),
             (byte)(value >> 24)
             ];
+#endif
         stream.Write(buffer);
+    }
+    public static void Write(Span<byte> bytes, int value)
+    {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        BinaryPrimitives.WriteInt32LittleEndian(bytes, value);
+#else
+        bytes[0] = (byte)value;
+        bytes[1] = (byte)(value >> 8);
+        bytes[2] = (byte)(value >> 16);
+        bytes[3] = (byte)(value >> 24);
+#endif
     }
     public static int ReadI32(Stream stream)
     {
         Span<byte> bytes = stackalloc byte[4];
         stream.ReadExactly(bytes);
-        return bytes[0] |
-            (bytes[1] << 8) |
-            (bytes[2] << 16) |
-            (bytes[3] << 24);
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        return BinaryPrimitives.ReadInt32LittleEndian(bytes);
+#else
+        return bytes[0]
+            | (bytes[1] << 8)
+            | (bytes[2] << 16)
+            | (bytes[3] << 24);
+#endif
+    }
+    public static int ReadI32(ReadOnlySpan<byte> bytes)
+    {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_1_OR_GREATER
+        return BinaryPrimitives.ReadInt32LittleEndian(bytes);
+#else
+        return bytes[0]
+            | (bytes[1] << 8)
+            | (bytes[2] << 16)
+            | (bytes[3] << 24);
+#endif
     }
     /// <summary>
     /// A Python-Bytes/ByteArray-stringification-like ToString method with length limit.

@@ -1,11 +1,21 @@
 ﻿using Myitian.LibNCM;
 
 Console.WriteLine("path");
-string sncm = Console.ReadLine();
+string sncm = ((ReadOnlySpan<char>)Console.ReadLine()).Trim().Trim('"').ToString();
 NCM ncm = NCM.Create(sncm);
 Console.WriteLine(ncm);
 Console.WriteLine(Convert.ToHexString(ncm.Gap0.Span));
 Console.WriteLine(Convert.ToHexString(ncm.Gap1.Span));
-ncm.WriteToFile(sncm + ".re.ncm");
+ncm.WriteToFile(sncm + ".reF.ncm");
+ncm = NCM.Create(File.ReadAllBytes(sncm));
+Console.WriteLine(ncm);
+Console.WriteLine(Convert.ToHexString(ncm.Gap0.Span));
+Console.WriteLine(Convert.ToHexString(ncm.Gap1.Span));
+ncm.WriteToFile(sncm + ".reB.ncm");
+ncm = NCM.Create((Span<byte>)File.ReadAllBytes(sncm));
+Console.WriteLine(ncm);
+Console.WriteLine(Convert.ToHexString(ncm.Gap0.Span));
+Console.WriteLine(Convert.ToHexString(ncm.Gap1.Span));
+ncm.WriteToFile(sncm + ".reS.ncm");
 File.WriteAllBytes(ncm.Metadata.MusicName + "." + ncm.Metadata.Format, ncm.MusicData.ToArray());
 File.WriteAllBytes(ncm.Metadata.MusicName + Path.GetExtension(ncm.Metadata.AlbumPic), ncm.CoverImage.ToArray());
